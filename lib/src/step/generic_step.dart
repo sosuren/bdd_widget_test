@@ -7,10 +7,13 @@ class GenericStep implements BddStep {
   final String rawLine;
   final String methodName;
 
+  bool isDataStep(String stepLine) =>
+    stepLine.contains('enters data') || stepLine.contains('see data');
+
   @override
   String get content => '''
 import 'package:flutter_test/flutter_test.dart';
-
+${isDataStep(rawLine) ? 'import \'package:bdd_widget_test/bdd_widget_test.dart\';\n' : ''}
 ${getStepSignature(rawLine)} {
   throw UnimplementedError();
 }
@@ -18,8 +21,8 @@ ${getStepSignature(rawLine)} {
 
   String getStepSignature(String stepLine) {
 
-    if (stepLine.contains('enters data') || stepLine.contains('see data')) {
-      return 'Future<void> $methodName(WidgetTester tester, dynamic table) async';
+    if (isDataStep(stepLine)) {
+      return 'Future<void> $methodName(WidgetTester tester, StepTable table) async';
     }
 
     final params = parametersValueRegExp.allMatches(stepLine);
