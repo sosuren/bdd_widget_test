@@ -1,22 +1,28 @@
 Feature: Counter Feature
-    
-    Background:
-        Given the app is running
-    
-    After:
-        # Just for the demo purpose, you may write "I don't see {'42'} text" to use built-in step instead.
-        # See the list of built-in step below.
-        And I do not see {'42'} text 
-    
-    # @testMethodName: testGoldens
-    Scenario: Initial counter value is 0
-        Then I see {'0'} text
 
     Scenario: Add button increments the counter
-        Given I am in home page
-        When I tap {Icons.add} icon
-        Then I tap {Icons.add} icon
-        And I should see {'2'} text
+        Given the user is in the home page
+        When user taps login button
+        Then user should see login form
+        When user enters data
+            | Type of home | Address                      | Adults |
+            | House A      | Nedre Storgate, 42 Drammen   | 2      |
+        Then user should see data
+            | Type of home | Address                      | Adults |
+            | House A      | Nedre Storgate, 42 Drammen   | 2      |
+
+    Scenario: Divide button increments the counter
+        Given the user is in the home page
+        When user taps login button
+        Then user should see login form
+        When user enters data
+            | Type of home | Address                      | Adults |
+            | House X      | Nedre Storgate, 42 Drammen   | 2      |
+            | House Y      | Nedre Storgate, 42 Drammen   |        |
+        Then user should see data
+            | Type of home | Address                      | Adults |
+            | House X      | Nedre Storgate, 42 Drammen   | 2      |
+            | House Y      | Nedre Storgate, 42 Drammen   |        |
 
     # Scenario: Built-in steps
     #     And I don't see {Icons.add} icon
