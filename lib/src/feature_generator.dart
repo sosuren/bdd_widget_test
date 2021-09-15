@@ -72,6 +72,7 @@ String generateFeatureDart(List<ScenarioTables> scenarioTables,
 
     _parseFeature(
       sb,
+      scenarioTables,
       feature,
       hasBackground,
       hasAfter,
@@ -105,6 +106,7 @@ bool _parseSetup(
 
 void _parseFeature(
   StringBuffer sb,
+  List<ScenarioTables> scenarioTables,
   List<BddLine> feature,
   bool hasSetUp,
   bool hasTearDown,
@@ -121,6 +123,7 @@ void _parseFeature(
     _parseScenario(
       sb,
       scenario.first.value,
+      scenarioTables,
       scenario.where((e) => e.type == LineType.step).toList(),
       hasSetUp,
       hasTearDown,
@@ -151,25 +154,58 @@ String _parseScenaioTags(
 void _parseScenario(
   StringBuffer sb,
   String scenarioTitle,
+  List<ScenarioTables> scenarioTables,
   List<BddLine> scenario,
   bool hasSetUp,
   bool hasTearDown,
   String testMethodName,
 ) {
+
+  final hasTable = scenarioTables.any((t) => t.identifier == scenarioTitle.hashCode.toString());
+
+  if (hasTable) {
+
+    final scenarioTable = scenarioTables.firstWhere((t) => t.identifier == scenarioTitle.hashCode.toString());
+
+    final inputLength = scenarioTable.tables.first.rows.length;
+    if (inputLength > 1) {
+
+      for (var i = 0; i < inputLength; i++) {
+        _parseScenarioWithTable(sb, scenarioTitle, scenarioTables, scenario, hasSetUp, hasTearDown, testMethodName, atIndex: i);
+      }
+      return;
+    }
+  }
+
+  _parseScenarioWithTable(sb, scenarioTitle, scenarioTables, scenario, hasSetUp, hasTearDown, testMethodName);
+}
+
+void _parseScenarioWithTable(
+  StringBuffer sb,
+  String scenarioTitle,
+  List<ScenarioTables> scenarioTables,
+  List<BddLine> scenario,
+  bool hasSetUp,
+  bool hasTearDown,
+  String testMethodName, {
+    int atIndex =0
+  }
+) {
+
   sb.writeln('    $testMethodName(\'$scenarioTitle\', (tester) async {');
-  if (hasSetUp) {
-    sb.writeln('      await $_setUpMethodName(tester);');
-  }
+    if (hasSetUp) {
+      sb.writeln('      await $_setUpMethodName(tester);');
+    }
 
-  for (final step in scenario) {
-    sb.writeln('      await ${getStepMethodCall(step.value, scenarioTitle: scenarioTitle)};');
-  }
+    for (final step in scenario) {
+      sb.writeln('      await ${getStepMethodCall(step.value, scenarioTitle: scenarioTitle, atIndex: atIndex)};');
+    }
 
-  if (hasTearDown) {
-    sb.writeln('      await $_tearDownMethodName(tester);');
-  }
+    if (hasTearDown) {
+      sb.writeln('      await $_tearDownMethodName(tester);');
+    }
 
-  sb.writeln('    });');
+    sb.writeln('    });');
 }
 
 String _parseTestMethodNameTag(String rawLine) {

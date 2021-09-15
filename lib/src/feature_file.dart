@@ -65,7 +65,7 @@ class FeatureFile {
   static final RegExp afterStepBlockMatcher = RegExp(r'After:[\s\S]*?(?=[\r?\n]{2})');
   static final RegExp scenarioMatcher = RegExp(r'Scenario:[\s\S]*?(?=[\r?\n]{2})');
   static final RegExp dataStepMatcher = RegExp(r'.*(enters data).*');
-  static final RegExp dataTableMatcher = RegExp(r'\|(.*)\|[\r\n].*');
+  static final RegExp dataTableMatcher = RegExp(r'(?<=((.*)[\r\n]))(\|.*\|[\r\n])+');
 
   static List<ScenarioTables> getScenarioTables(String input) {
 
@@ -79,9 +79,11 @@ class FeatureFile {
 
     for (final scenarioMatch in allMatchedScenarios) {
 
-      final scenarioContent = scenarioMatch.group(0);
+      final scenarioGroup = scenarioMatch.group(0);
 
-      if (scenarioContent != null) {
+      if (scenarioGroup != null) {
+
+        final scenarioContent = '$scenarioGroup\n'; // add one line break to match tables at the end
 
         final allMatchedDataSteps = dataStepMatcher.allMatches(scenarioContent).toList();
         final allMatchedDataTables = dataTableMatcher.allMatches(scenarioContent).toList();
@@ -106,7 +108,7 @@ class FeatureFile {
           stepTables.add(stepTable);
         }
 
-        final scenarioName = scenarioContent
+        final scenarioName = scenarioGroup
           .split('\n')
           .map((line) => BddLine(line))
           .firstWhere((bddLine) => bddLine.type == LineType.scenario)
@@ -135,8 +137,8 @@ class FeatureFile {
     .join('\n'); // re join each line by line break
   
   static StepTable _buildTableFromTableContent(String stepName, String tableContent) {
-    
-    final rows = tableContent.split('\n');
+
+    final rows = tableContent.split('\n').where((line) => line.trim().isNotEmpty).toList();
 
     final headerRow = rows.first;
     final header = StepTableHeader(
@@ -149,6 +151,7 @@ class FeatureFile {
     rows.removeAt(0);
     final values = <StepTableRow>[];
     for (final valueRow in rows) {
+
       values.add(
         StepTableRow(
           values: _trimTablePipes(valueRow)

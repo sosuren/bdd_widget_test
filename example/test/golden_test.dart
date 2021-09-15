@@ -39,12 +39,29 @@ void main() {
       await theUserMenuPageIsOpened(tester);
       await theUserTappedTheHomeButton(tester);
       await theSaveButtonIsInactive(tester);
-      await theUserEntersDataInTheCreateHomeForm(tester, featureTables['455684330']['834000508']);
+      await theUserEntersDataInTheCreateHomeForm(tester, featureTables['455684330']['834000508'].copyWithRow(0));
       await theSaveButtonBecomesActive(tester);
       await theUserTappedTheSaveButton(tester);
       await theUserIsRedirectedToTheMyHomePage(tester);
       await theHomeIsCreated(tester);
-      await theUserEntersDataInTheUpdateHomeForm(tester, featureTables['455684330']['229420331']);
+      await theUserEntersDataInTheUpdateHomeForm(tester, featureTables['455684330']['229420331'].copyWithRow(0));
+      await theHomeIsCreated(tester);
+      await bddTearDown(tester);
+    });
+    testWidgets('Users is able to create a New Home', (tester) async {
+      await bddSetUp(tester);
+      await theUserIsRegistered(tester);
+      await theUserIsLogged(tester);
+      await theUserMenuPageIsOpened(tester);
+      await theUserTappedTheHomeButton(tester);
+      await theSaveButtonIsInactive(tester);
+      await theUserEntersDataInTheCreateHomeForm(tester, featureTables['455684330']['834000508'].copyWithRow(1));
+      await theSaveButtonBecomesActive(tester);
+      await theUserTappedTheSaveButton(tester);
+      await theUserIsRedirectedToTheMyHomePage(tester);
+      await theHomeIsCreated(tester);
+      await theUserEntersDataInTheUpdateHomeForm(tester, featureTables['455684330']['229420331'].copyWithRow(1));
+      await theHomeIsCreated(tester);
       await bddTearDown(tester);
     });
     testWidgets('Users is able to update a New Home', (tester) async {
@@ -54,12 +71,12 @@ void main() {
       await theUserMenuPageIsOpened(tester);
       await theUserTappedTheHomeButton(tester);
       await theSaveButtonIsInactive(tester);
-      await theUserEntersDataInTheCreateHomeForm(tester, featureTables['698049928']['834000508']);
+      await theUserEntersDataInTheCreateHomeForm(tester, featureTables['698049928']['834000508'].copyWithRow(0));
       await theSaveButtonBecomesActive(tester);
       await theUserTappedTheSaveButton(tester);
       await theUserIsRedirectedToTheMyHomePage(tester);
       await theHomeIsCreated(tester);
-      await theUserEntersDataInTheUpdateHomeForm(tester, featureTables['698049928']['229420331']);
+      await theUserEntersDataInTheUpdateHomeForm(tester, featureTables['698049928']['229420331'].copyWithRow(0));
       await bddTearDown(tester);
     });
   });
