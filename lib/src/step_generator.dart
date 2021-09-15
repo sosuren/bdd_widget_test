@@ -46,7 +46,7 @@ String getStepMethodCall(String stepLine, { String? scenarioTitle, int? atIndex 
   final name = getStepMethodName(stepLine);
 
   if (FeatureFile.dataStepMatcher.hasMatch(stepLine)) {
-    return '$name(tester, featureTables[\'${scenarioTitle.hashCode}\'][\'${name.hashCode}\'].copyWithRow(${atIndex!}))';
+    return '$name(tester, featureTables[\'${scenarioTitle.hashCode}\']![\'${name.hashCode}\']!.copyWithRow(${atIndex!}))';
   }
 
   final params = parametersValueRegExp.allMatches(stepLine);
