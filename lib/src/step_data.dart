@@ -55,11 +55,16 @@ class StepTable {
   final StepTableHeader header;
   final List<StepTableRow> rows;
 
-  StepTable copyWithRow(int atIndex) => StepTable(
-    identifier: identifier,
-    header: header,
-    rows: List.from(rows)..removeAt(atIndex),
-  );
+  StepTable copyWithRow(int atIndex) {
+
+    final selectedRow = rows[atIndex];
+
+    return StepTable(
+      identifier: identifier,
+      header: header,
+      rows: [selectedRow],
+    );
+  }
 
   @override
   String toString() {
