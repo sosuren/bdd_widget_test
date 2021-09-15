@@ -64,7 +64,7 @@ class FeatureFile {
   static final RegExp backgroundBlockMatcher = RegExp(r'Background:[\s\S]*?(?=[\r?\n]{2})');
   static final RegExp afterStepBlockMatcher = RegExp(r'After:[\s\S]*?(?=[\r?\n]{2})');
   static final RegExp scenarioMatcher = RegExp(r'Scenario:[\s\S]*?(?=[\r?\n]{2})');
-  static final RegExp dataStepMatcher = RegExp(r'.*(enters data).*');
+  static final RegExp dataStepMatcher = RegExp(r'.*((enters data)|(see data)).*');
   static final RegExp dataTableMatcher = RegExp(r'(?<=((.*)[\r\n]))(\|.*\|[\r\n])+');
 
   static List<ScenarioTables> getScenarioTables(String input) {

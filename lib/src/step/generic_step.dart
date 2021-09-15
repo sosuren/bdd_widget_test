@@ -18,7 +18,7 @@ ${getStepSignature(rawLine)} {
 
   String getStepSignature(String stepLine) {
 
-    if (stepLine.contains('enters data')) {
+    if (stepLine.contains('enters data') || stepLine.contains('see data')) {
       return 'Future<void> $methodName(WidgetTester tester, dynamic table) async';
     }
 
