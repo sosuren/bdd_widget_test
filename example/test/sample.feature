@@ -1,4 +1,4 @@
-Feature: Counter
+Feature: Counter Feature
     
     Background:
         Given the app is running
@@ -13,8 +13,10 @@ Feature: Counter
         Then I see {'0'} text
 
     Scenario: Add button increments the counter
+        Given I am in home page
         When I tap {Icons.add} icon
-        Then I see {'1'} text
+        Then I tap {Icons.add} icon
+        And I should see {'2'} text
 
     # Scenario: Built-in steps
     #     And I don't see {Icons.add} icon

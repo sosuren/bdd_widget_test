@@ -1,7 +1,7 @@
 class BddLine {
   BddLine(this.rawLine)
       : type = _lineTypeFromString(rawLine),
-        value = _removeLinePrefix(rawLine);
+        value = removeLinePrefix(rawLine);
 
   final String rawLine;
   final String value;
@@ -47,7 +47,7 @@ const tagMarkers = ['@'];
 const scenarioMarkers = ['Scenario:', 'Example:'];
 const stepMarkers = ['Given', 'When', 'Then', 'And', 'But'];
 
-String _removeLinePrefix(String rawLine) {
+String removeLinePrefix(String rawLine) {
   final lines = rawLine.split(' ');
   return lines.skip(1).join(' ');
 }

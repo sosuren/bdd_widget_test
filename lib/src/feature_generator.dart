@@ -1,12 +1,31 @@
 import 'package:bdd_widget_test/src/bdd_line.dart';
+import 'package:bdd_widget_test/src/step_data.dart';
 import 'package:bdd_widget_test/src/step_file.dart';
 import 'package:bdd_widget_test/src/step_generator.dart';
 
 const _setUpMethodName = 'bddSetUp';
 const _tearDownMethodName = 'bddTearDown';
 
-String generateFeatureDart(
-    List<BddLine> lines, List<StepFile> steps, String testMethodName) {
+String generateTablesDart(List<ScenarioTables> scenarioTables) {
+
+  final sb = StringBuffer();
+  sb.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
+  sb.writeln();
+  sb.writeln('import \'package:bdd_widget_test/bdd_widget_test.dart\';');
+
+  sb.writeln('final Map<String, Map<String, StepTable>> featureTables = {');
+
+  for (final scenarioTable in scenarioTables) {
+    sb.write(scenarioTable.dartContent);
+  }
+
+  sb.writeln('};');
+
+  return sb.toString();
+}
+
+String generateFeatureDart(List<ScenarioTables> scenarioTables,
+    List<BddLine> lines, List<StepFile> steps, String testMethodName, String tablesFilename) {
   final sb = StringBuffer();
   sb.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
   sb.writeln('// ignore_for_file: unused_import, directives_ordering');
@@ -14,6 +33,13 @@ String generateFeatureDart(
   sb.writeln('import \'package:flutter/material.dart\';');
   sb.writeln('import \'package:flutter_test/flutter_test.dart\';');
   sb.writeln();
+
+  if (scenarioTables.isNotEmpty) {
+    sb.writeln('import \'package:bdd_widget_test/bdd_widget_test.dart\';');
+    sb.writeln();
+    sb.writeln('import \'./$tablesFilename\';');
+    sb.writeln();
+  }
 
   var featureTestMethodNameOverride = testMethodName;
 
@@ -120,6 +146,8 @@ String _parseScenaioTags(
   return scenarioTestMethodName;
 }
 
+// TODO: pass scenario tables upto here
+// and repeat step if multiple rows 
 void _parseScenario(
   StringBuffer sb,
   String scenarioTitle,
@@ -134,7 +162,7 @@ void _parseScenario(
   }
 
   for (final step in scenario) {
-    sb.writeln('      await ${getStepMethodCall(step.value)};');
+    sb.writeln('      await ${getStepMethodCall(step.value, scenarioTitle: scenarioTitle)};');
   }
 
   if (hasTearDown) {

@@ -17,6 +17,11 @@ ${getStepSignature(rawLine)} {
 ''';
 
   String getStepSignature(String stepLine) {
+
+    if (stepLine.contains('enters data')) {
+      return 'Future<void> $methodName(WidgetTester tester, dynamic table) async';
+    }
+
     final params = parametersValueRegExp.allMatches(stepLine);
     if (params.isEmpty) {
       return 'Future<void> $methodName(WidgetTester tester) async';

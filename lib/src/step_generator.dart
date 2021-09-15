@@ -1,3 +1,4 @@
+import 'package:bdd_widget_test/src/feature_file.dart';
 import 'package:bdd_widget_test/src/regex.dart';
 import 'package:bdd_widget_test/src/step/bdd_step.dart';
 import 'package:bdd_widget_test/src/step/generic_step.dart';
@@ -22,6 +23,10 @@ import 'package:bdd_widget_test/src/step/i_wait.dart';
 import 'package:bdd_widget_test/src/step/the_app_is_running_step.dart';
 import 'package:bdd_widget_test/src/util/string_utils.dart';
 
+import 'package:path/path.dart' as p;
+
+String getTablesFilename(String featureDir, String featurePath) => '${p.withoutExtension(p.basename(featurePath))}_tables.dart';
+
 String getStepFilename(String stepText) {
   final step = getStepMethodName(stepText);
   return underscore(step);
@@ -37,14 +42,19 @@ String getStepMethodName(String stepText) {
   return camelize(text);
 }
 
-String getStepMethodCall(String stepLine) {
+String getStepMethodCall(String stepLine, { String? scenarioTitle }) {
   final name = getStepMethodName(stepLine);
+
+  if (FeatureFile.dataStepMatcher.hasMatch(stepLine)) {
+    return '$name(tester, featureTables[\'${scenarioTitle.hashCode}\'][\'${name.hashCode}\'])';
+  }
 
   final params = parametersValueRegExp.allMatches(stepLine);
   if (params.isEmpty) {
     return '$name(tester)';
   }
 
+  // TODO: pass scenario and index if table exists
   final methodParameters = params.map((p) => p.group(0)).join(', ');
   return '$name(tester, $methodParameters)';
 }

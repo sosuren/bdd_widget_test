@@ -4,9 +4,12 @@ import 'package:bdd_widget_test/src/existing_steps.dart';
 import 'package:bdd_widget_test/src/feature_file.dart';
 import 'package:bdd_widget_test/src/generator_options.dart';
 import 'package:bdd_widget_test/src/step_file.dart';
+import 'package:bdd_widget_test/src/step_generator.dart';
 import 'package:build/build.dart';
 
 import 'package:path/path.dart' as p;
+
+export 'package:bdd_widget_test/src/step_data.dart';
 
 Builder featureBuilder(BuilderOptions options) => FeatureBuilder(
       GeneratorOptions.fromMap(options.config),
@@ -23,14 +26,23 @@ class FeatureBuilder implements Builder {
     final contents = await buildStep.readAsString(inputId);
 
     final featureDir = p.dirname(inputId.path);
+    final tablesFileName = getTablesFilename(featureDir, inputId.path);
     final feature = FeatureFile(
       featureDir: featureDir,
       package: inputId.package,
+      tablesFilename: tablesFileName,
       existingSteps:
           getExistingStepSubfolders(featureDir, generatorOptions.stepFolder),
       input: contents,
       generatorOptions: generatorOptions,
     );
+
+    if (feature.scenarioTables.isNotEmpty) {
+      
+      final f = File(p.join(featureDir, tablesFileName));
+      final file = await f.create();
+      await file.writeAsString(feature.tableContent);
+    }
 
     final featureDart = inputId.changeExtension('_test.dart');
     await buildStep.writeAsString(featureDart, feature.dartContent);
