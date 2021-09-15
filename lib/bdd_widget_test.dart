@@ -37,15 +37,15 @@ class FeatureBuilder implements Builder {
       generatorOptions: generatorOptions,
     );
 
+    final featureDart = inputId.changeExtension('_test.dart');
+    await buildStep.writeAsString(featureDart, feature.dartContent);
+
     if (feature.scenarioTables.isNotEmpty) {
       
       final f = File(p.join(featureDir, tablesFileName));
       final file = await f.create();
       await file.writeAsString(feature.tableContent);
     }
-
-    final featureDart = inputId.changeExtension('_test.dart');
-    await buildStep.writeAsString(featureDart, feature.dartContent);
 
     final steps = feature
         .getStepFiles()
