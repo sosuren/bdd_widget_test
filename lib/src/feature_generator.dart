@@ -149,8 +149,6 @@ String _parseScenaioTags(
   return scenarioTestMethodName;
 }
 
-// TODO: pass scenario tables upto here
-// and repeat step if multiple rows 
 void _parseScenario(
   StringBuffer sb,
   String scenarioTitle,

@@ -54,7 +54,6 @@ String getStepMethodCall(String stepLine, { String? scenarioTitle, int? atIndex 
     return '$name(tester)';
   }
 
-  // TODO: pass scenario and index if table exists
   final methodParameters = params.map((p) => p.group(0)).join(', ');
   return '$name(tester, $methodParameters)';
 }
