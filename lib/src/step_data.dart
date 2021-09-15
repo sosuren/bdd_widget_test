@@ -55,10 +55,10 @@ class StepTable {
   final StepTableHeader header;
   final List<StepTableRow> rows;
 
-  StepTable copyWihRow(int atIndex) => StepTable(
+  StepTable copyWithRow(int atIndex) => StepTable(
     identifier: identifier,
     header: header,
-    rows: [rows.removeAt(atIndex)],
+    rows: List.from(rows)..removeAt(atIndex),
   );
 
   @override
@@ -101,27 +101,3 @@ class ScenarioTables {
   },
   """;
 }
-
-final Map<String, Map<String, StepTable>> featureTables  = {
-  '1233': {
-    '23332': StepTable(
-      identifier: '23332',
-      header: StepTableHeader(
-          names: [
-          'Type of home',
-          'Address',
-          'Adults'
-        ],
-      ),
-      rows: [
-        StepTableRow(
-          values: [
-            'House',
-            'Nedre Storgate, 42 Drammen',
-            '2',
-          ],
-        ),
-      ],
-    ),
-  },
-};
