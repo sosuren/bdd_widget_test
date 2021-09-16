@@ -12,10 +12,10 @@ Feature: Counter Feature
         Given the user is in the home page
         When user taps login button
         Then user should see login form
-        When user enters data in the login form
+        When user enters these data in the login form
             | Type of home | Address                      | Adults |
             | House A      | Nedre Storgate, 42 Drammen   | 2      |
-        Then user should see data in the result page
+        Then user should see these results in the home page
             | Type of home | Address                      | Adults |
             | House A      | Nedre Storgate, 42 Drammen   | 2      |
 
@@ -23,11 +23,11 @@ Feature: Counter Feature
         Given the user is in the home page
         When user taps login button
         Then user should see login form
-        When user enters data in the login form
+        When user enters these data in the login form
             | Type of home | Address                      | Adults |
             | House X      | Nedre Storgate, 42 Drammen   | 2      |
             | House Y      | Nedre Storgate, 42 Drammen   |        |
-        Then user should see data in the result page
+        Then user should see these results in the home page
             | Type of home | Address                      | Adults |
             | House X      | Nedre Storgate, 42 Drammen   | 2      |
             | House Y      | Nedre Storgate, 42 Drammen   |        |

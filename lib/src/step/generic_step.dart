@@ -1,3 +1,4 @@
+import 'package:bdd_widget_test/src/feature_file.dart';
 import 'package:bdd_widget_test/src/regex.dart';
 import 'package:bdd_widget_test/src/step/bdd_step.dart';
 
@@ -8,7 +9,7 @@ class GenericStep implements BddStep {
   final String methodName;
 
   bool isDataStep(String stepLine) =>
-    stepLine.contains('enters data') || stepLine.contains('see data');
+   FeatureFile.dataStepMatcher.hasMatch(stepLine);
 
   @override
   String get content => '''

@@ -11,8 +11,8 @@ import './sample_tables.dart';
 import './step/the_user_is_in_the_home_page.dart';
 import './step/user_taps_login_button.dart';
 import './step/user_should_see_login_form.dart';
-import './step/user_enters_data_in_the_login_form.dart';
-import './step/user_should_see_data_in_the_result_page.dart';
+import './step/user_enters_these_data_in_the_login_form.dart';
+import './step/user_should_see_these_results_in_the_home_page.dart';
 
 void main() {
   Future<void> bddSetUp(WidgetTester tester) async {
@@ -30,24 +30,24 @@ void main() {
       await theUserIsInTheHomePage(tester);
       await userTapsLoginButton(tester);
       await userShouldSeeLoginForm(tester);
-      await userEntersDataInTheLoginForm(tester, featureTables['399448914']!['455910068']!.copyWithRow(0));
-      await userShouldSeeDataInTheResultPage(tester, featureTables['399448914']!['547161467']!.copyWithRow(0));
+      await userEntersTheseDataInTheLoginForm(tester, featureTables['399448914']!['993915514']!.copyWithRow(0));
+      await userShouldSeeTheseResultsInTheHomePage(tester, featureTables['399448914']!['628491749']!.copyWithRow(0));
     });
     testWidgets('Divide button increments the counter', (tester) async {
       await bddSetUp(tester);
       await theUserIsInTheHomePage(tester);
       await userTapsLoginButton(tester);
       await userShouldSeeLoginForm(tester);
-      await userEntersDataInTheLoginForm(tester, featureTables['869846095']!['455910068']!.copyWithRow(0));
-      await userShouldSeeDataInTheResultPage(tester, featureTables['869846095']!['547161467']!.copyWithRow(0));
+      await userEntersTheseDataInTheLoginForm(tester, featureTables['869846095']!['993915514']!.copyWithRow(0));
+      await userShouldSeeTheseResultsInTheHomePage(tester, featureTables['869846095']!['628491749']!.copyWithRow(0));
     });
     testWidgets('Divide button increments the counter', (tester) async {
       await bddSetUp(tester);
       await theUserIsInTheHomePage(tester);
       await userTapsLoginButton(tester);
       await userShouldSeeLoginForm(tester);
-      await userEntersDataInTheLoginForm(tester, featureTables['869846095']!['455910068']!.copyWithRow(1));
-      await userShouldSeeDataInTheResultPage(tester, featureTables['869846095']!['547161467']!.copyWithRow(1));
+      await userEntersTheseDataInTheLoginForm(tester, featureTables['869846095']!['993915514']!.copyWithRow(1));
+      await userShouldSeeTheseResultsInTheHomePage(tester, featureTables['869846095']!['628491749']!.copyWithRow(1));
     });
   });
 }
