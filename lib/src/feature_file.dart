@@ -65,7 +65,11 @@ class FeatureFile {
   static final RegExp afterStepBlockMatcher = RegExp(r'After:[\s\S]*?(?=[\r?\n]{2})');
   static final RegExp scenarioMatcher = RegExp(r'Scenario:[\s\S]*?(?=[\r?\n]{2})');
   static final RegExp dataStepMatcher = RegExp(r'.*((these data)|(see these results)).*');
-  static final RegExp dataTableMatcher = RegExp(r'(?<=((.*)[\r\n]))(\|.*\|[\r\n])+');
+   // referred from: https://github.com/jonsamwell/dart_gherkin/blob/803b5fc1a16b00093123eca5aeea70affa259e50/lib/src/gherkin/syntax/table_line_syntax.dart#L11
+  static final RegExp tableLineMatcher = RegExp(
+    r'^\s*(\|.*\|)\s*(?:\s*#\s*.*)?$',
+    caseSensitive: false,
+  );
 
   static List<ScenarioTables> getScenarioTables(String input) {
 
@@ -83,38 +87,27 @@ class FeatureFile {
 
       if (scenarioGroup != null) {
 
-        final scenarioContent = '$scenarioGroup\n'; // add one line break to match tables at the end
+        final scenarioContent = '$scenarioGroup\n\n'; // add one line break to match tables at the end
 
         final allMatchedDataSteps = dataStepMatcher.allMatches(scenarioContent).toList();
-        final allMatchedDataTables = dataTableMatcher.allMatches(scenarioContent).toList();
 
-        if (allMatchedDataSteps.length != allMatchedDataTables.length) {
-          throw Exception('Mising data table for some steps');
+        if (allMatchedDataSteps.isEmpty) {
+          continue;
         }
 
-        final stepTables = <StepTable>[];
+        final stepTables = _parseStepTables(scenarioContent);
 
-        for (var i = 0; i < allMatchedDataSteps.length; i++) {
-
-          final thisMatchedDataStep = allMatchedDataSteps[i];
-          final thisMatchedDataTable = allMatchedDataTables[i];
-
-          // read step definition only
-          final stepMethodName = getStepMethodName(
-            removeLinePrefix(thisMatchedDataStep.group(0)!),
-          );
-
-          final stepTable = _buildTableFromTableContent(stepMethodName, thisMatchedDataTable.group(0)!);
-          stepTables.add(stepTable);
+        if (allMatchedDataSteps.length != stepTables.length) {
+          throw Exception('Missing data table for data step.\n\tNumber of data step: ${allMatchedDataSteps.length}\n\tNumber of tables; {stepTables.length}');
         }
-
-        final scenarioName = scenarioGroup
-          .split('\n')
-          .map((line) => BddLine(line))
-          .firstWhere((bddLine) => bddLine.type == LineType.scenario)
-          .value;
 
         if (stepTables.isNotEmpty) {
+
+          final scenarioName = scenarioGroup
+            .split('\n')
+            .map((line) => BddLine(line))
+            .firstWhere((bddLine) => bddLine.type == LineType.scenario)
+            .value;
 
           final scenarioTable = ScenarioTables(
             identifier: scenarioName.hashCode.toString(),
@@ -135,35 +128,64 @@ class FeatureFile {
     .map((line) => line.trim()) // removes extra spaces at both end of each line
     .map((line) => line.startsWith('#') ? '' : line) // line comments are replaced with empty string
     .join('\n'); // re join each line by line break
-  
-  static StepTable _buildTableFromTableContent(String stepName, String tableContent) {
 
-    final rows = tableContent.split('\n').where((line) => line.trim().isNotEmpty).toList();
-
-    final headerRow = rows.first;
-    final header = StepTableHeader(
-      names: _trimTablePipes(headerRow)
-        .split('|')
-        .map((e) => e.trim())
-        .toList(),
+  static List<StepTable> _parseStepTables(String scenarioContent) {
+    final tableLineMatcher = RegExp(
+      r'^\s*(\|.*\|)\s*(?:\s*#\s*.*)?$',
+      caseSensitive: false,
     );
 
-    rows.removeAt(0);
-    final values = <StepTableRow>[];
-    for (final valueRow in rows) {
+    final stepTables = <StepTable>[];
+    StepTable? stepTable;
 
-      values.add(
-        StepTableRow(
-          values: _trimTablePipes(valueRow)
-            .split('|')
-            .map((e) => e.trim())
-            .toList(),
-        ),
-      );
+    final stepLines = scenarioContent.split('\n').toList();
+
+    for (var i = 0; i < stepLines.length; i++) {
+
+      final thisLine = stepLines[i];
+
+      final isTableLine = tableLineMatcher.hasMatch(thisLine);
+
+      if (!isTableLine) {
+
+        if (stepTable != null) {
+          stepTables.add(stepTable);
+          stepTable = null;
+        }
+        continue;
+      }
+
+      if (stepTable == null) { // table row started
+
+        final previousLine = stepLines[i - 1];
+        final stepMethodName = getStepMethodName(
+          removeLinePrefix(previousLine),
+        );
+        stepTable = StepTable(
+          identifier: stepMethodName.hashCode.toString(),
+          header: StepTableHeader(names: _getRowValues(thisLine)),
+          rows: []
+        );
+
+      } else { // is table row
+
+        stepTable = StepTable(
+          identifier: stepTable.identifier,
+          header: stepTable.header,
+          rows: List.from(stepTable.rows)..add(
+            StepTableRow(values: _getRowValues(thisLine)),
+          ),
+        );
+      }
     }
 
-    return StepTable(identifier: stepName.hashCode.toString(), header: header, rows: values);
+    return stepTables;
   }
+
+  static List<String> _getRowValues(String row) => _trimTablePipes(row)
+        .split('|')
+        .map((e) => e.trim())
+        .toList();
 
   static String _trimTablePipes(String rowContent) => rowContent
     .replaceAll(RegExp(r'^\|'), '')

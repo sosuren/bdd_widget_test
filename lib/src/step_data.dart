@@ -40,7 +40,7 @@ class StepTable {
     }
 
     if (rows.isEmpty) {
-      throw Exception('Input data row should not be empty');
+      return;
     }
 
     final totalItems = rows.fold<int>(0, (previousValue, element) => previousValue + element.values.length);
