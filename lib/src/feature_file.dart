@@ -18,13 +18,14 @@ class FeatureFile {
             .map((line) => line.trim())
             .map((line) => BddLine(line))) {
     _stepFiles = _lines
-        .where((line) => line.type == LineType.step)
+        .where((line) => [LineType.step, LineType.scenario].contains(line.type))
         .map((e) => StepFile.create(
               featureDir,
               package,
               e.value,
               existingSteps,
               generatorOptions,
+              e.type == LineType.scenario,
             ))
         .toList();
   }

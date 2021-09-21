@@ -20,6 +20,7 @@ import 'package:bdd_widget_test/src/step/i_see_widget.dart';
 import 'package:bdd_widget_test/src/step/i_tap_icon.dart';
 import 'package:bdd_widget_test/src/step/i_tap_text.dart';
 import 'package:bdd_widget_test/src/step/i_wait.dart';
+import 'package:bdd_widget_test/src/step/scenario_step.dart';
 import 'package:bdd_widget_test/src/step/the_app_is_running_step.dart';
 import 'package:bdd_widget_test/src/util/string_utils.dart';
 
@@ -56,6 +57,12 @@ String getStepMethodCall(String stepLine, { String? scenarioTitle, int? atIndex 
 
   final methodParameters = params.map((p) => p.group(0)).join(', ');
   return '$name(tester, $methodParameters)';
+}
+
+String generateScenarioDart(String package, String line) {
+  final methodName = getStepMethodName(line);
+  final scenarioStep = ScenarioStep(methodName);
+  return scenarioStep.content;
 }
 
 String generateStepDart(String package, String line) {

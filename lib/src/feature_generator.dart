@@ -194,6 +194,7 @@ void _parseScenarioWithTable(
     if (hasSetUp) {
       sb.writeln('      await $_setUpMethodName(tester);');
     }
+    sb.writeln('      await ${getStepMethodName(scenarioTitle)}();');
 
     for (final step in scenario) {
       sb.writeln('      await ${getStepMethodCall(step.value, scenarioTitle: scenarioTitle, atIndex: atIndex)};');
