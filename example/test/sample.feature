@@ -3,7 +3,7 @@ Feature: Counter Feature
     Background:
         Given the user is in the home page
 
-    Scenario: User should see login form
+    Scenario: User should be able to navigate to login page
         Given the user is in the home page
         When user taps login button
         Then user should see login form
