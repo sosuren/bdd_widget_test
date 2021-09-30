@@ -11,6 +11,15 @@ Feature: Testing feature
         When I invoke test
     ''';
 
+    const expectedScenarioStep = '''
+import 'package:flutter_test/flutter_test.dart';
+
+Future<void> testingScenario() async {
+  /// mock here
+  throw UnimplementedError();
+}
+''';
+
     const expectedSteps = '''
 import 'package:flutter_test/flutter_test.dart';
 
@@ -20,10 +29,17 @@ Future<void> iInvokeTest(WidgetTester tester) async {
 ''';
 
     final feature = FeatureFile(
-        featureDir: '$path.feature', package: path, input: featureFile);
+        featureDir: '$path.feature', tablesFilename: '${path}_tables.dart', package: path, input: featureFile);
+
+    expect(feature.getStepFiles().whereType<NewStepFile>().length == 2, isTrue);
 
     expect(
-      feature.getStepFiles().whereType<NewStepFile>().single.dartContent,
+      feature.getStepFiles().whereType<NewStepFile>().first.dartContent,
+      expectedScenarioStep,
+    );
+
+    expect(
+      feature.getStepFiles().whereType<NewStepFile>().last.dartContent,
       expectedSteps,
     );
   });
@@ -36,6 +52,15 @@ Feature: Testing feature
         When I invoke {0} test with {Some} parameter
     ''';
 
+    const expectedScenarioStep = '''
+import 'package:flutter_test/flutter_test.dart';
+
+Future<void> testingScenario() async {
+  /// mock here
+  throw UnimplementedError();
+}
+''';
+
     const expectedSteps = '''
 import 'package:flutter_test/flutter_test.dart';
 
@@ -45,10 +70,17 @@ Future<void> iInvokeTestWithParameter(WidgetTester tester, dynamic param1, dynam
 ''';
 
     final feature = FeatureFile(
-        featureDir: '$path.feature', package: path, input: featureFile);
+        featureDir: '$path.feature', tablesFilename: '${path}_tables.feature',package: path, input: featureFile);
+
+    expect(feature.getStepFiles().whereType<NewStepFile>().length == 2, isTrue);
 
     expect(
-      feature.getStepFiles().whereType<NewStepFile>().single.dartContent,
+      feature.getStepFiles().whereType<NewStepFile>().first.dartContent,
+      expectedScenarioStep,
+    );
+
+    expect(
+      feature.getStepFiles().whereType<NewStepFile>().last.dartContent,
       expectedSteps,
     );
   });
@@ -57,9 +89,18 @@ Future<void> iInvokeTestWithParameter(WidgetTester tester, dynamic param1, dynam
     const path = 'test';
     const featureFile = '''
 Feature: Testing feature
-    Scenario: Testing scenario
+    Scenario: [asd-ddf12*] [(dfd)] Testing scenario (adsf)
         When !  I@ #invoke\$%   ^'`~  &*+=) test ?   &&/| \\ ;:
     ''';
+
+    const expectedScenarioStep = '''
+import 'package:flutter_test/flutter_test.dart';
+
+Future<void> asdddf12DfdTestingScenarioAdsf() async {
+  /// mock here
+  throw UnimplementedError();
+}
+''';
 
     const expectedSteps = '''
 import 'package:flutter_test/flutter_test.dart';
@@ -70,10 +111,17 @@ Future<void> iInvokeTest(WidgetTester tester) async {
 ''';
 
     final feature = FeatureFile(
-        featureDir: '$path.feature', package: path, input: featureFile);
+        featureDir: '$path.feature', tablesFilename: '${path}_tables.feature', package: path, input: featureFile);
+
+    expect(feature.getStepFiles().whereType<NewStepFile>().length == 2, isTrue);
 
     expect(
-      feature.getStepFiles().whereType<NewStepFile>().single.dartContent,
+      feature.getStepFiles().whereType<NewStepFile>().first.dartContent,
+      expectedScenarioStep,
+    );
+
+    expect(
+      feature.getStepFiles().whereType<NewStepFile>().last.dartContent,
       expectedSteps,
     );
   });
