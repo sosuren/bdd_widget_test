@@ -6,7 +6,7 @@ void main() {
     const path = 'test';
 
     final feature =
-        FeatureFile(featureDir: '$path.feature', package: path, input: '');
+        FeatureFile(featureDir: '$path.feature', tablesFilename: '${path}_tables.dart', package: path, input: '');
     expect(feature.getStepFiles().length, 0);
   });
 }

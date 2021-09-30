@@ -22,6 +22,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import './step/the_server_always_return_errors.dart';
 import './step/the_test_finishes.dart';
+import './step/testing_scenario.dart';
 import './step/the_app_is_running.dart';
 
 void main() {
@@ -34,6 +35,7 @@ void main() {
   group('Testing feature', () {
     testWidgets('Testing scenario', (tester) async {
       await bddSetUp(tester);
+      await testingScenario();
       await theAppIsRunning(tester);
       await bddTearDown(tester);
     });
@@ -43,6 +45,7 @@ void main() {
 
     final feature = FeatureFile(
       featureDir: 'test.feature',
+      tablesFilename: 'test_tables.dart',
       package: 'test',
       input: featureFile,
     );

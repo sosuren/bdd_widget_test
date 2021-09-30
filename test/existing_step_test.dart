@@ -14,8 +14,12 @@ Feature: Testing feature
     final feature = FeatureFile(
       featureDir: '$path.feature',
       package: path,
+      tablesFilename: '${path}_tables.dart',
       input: featureFile,
-      existingSteps: {'i_have_a_step.dart': 'step'},
+      existingSteps: {
+        'i_have_a_step.dart': 'step',
+        'testing_scenario.dart': 'scenario',
+      },
     );
 
     expect(
@@ -28,7 +32,7 @@ Feature: Testing feature
     );
     expect(
       feature.getStepFiles().whereType<ExistingStepFile>().length,
-      1,
+      2,
     );
   });
 }
