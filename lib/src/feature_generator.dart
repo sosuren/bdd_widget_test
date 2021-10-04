@@ -12,11 +12,12 @@ String generateTablesDart(List<ScenarioTables> scenarioTables) {
   sb.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
   sb.writeln();
   sb.writeln('import \'package:bdd_widget_test/bdd_widget_test.dart\';');
+  sb.writeln();
 
   sb.writeln('final Map<String, Map<String, StepTable>> featureTables = {');
 
   for (final scenarioTable in scenarioTables) {
-    sb.write(scenarioTable.dartContent);
+    sb.writeln(scenarioTable.dartContent);
   }
 
   sb.writeln('};');
