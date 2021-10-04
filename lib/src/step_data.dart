@@ -9,10 +9,9 @@ class StepTableHeader {
   String toString() => names.join(', ');
 
   String get dartContent => """
-  StepTableHeader(
-      names: [${names.map((n) => '\'$n\'').join(',')}]
-    )
-  """;
+StepTableHeader(
+        names: [${names.map((n) => '\'$n\'').join(', ')}],
+      ),""";
 }
 
 class StepTableRow {
@@ -26,9 +25,8 @@ class StepTableRow {
 
   String get dartContent => """
 StepTableRow(
-      values: [${values.map((v) => '\'$v\'').join(',')}]
-    )
-  """;
+          values: [${values.map((v) => '\'$v\'').join(',')}]
+        ),""";
 }
 
 class StepTable {
@@ -83,14 +81,21 @@ class StepTable {
   }
 
   String get dartContent => """
-  StepTable(
-    identifier: '$identifier',
-    header: ${header.dartContent},
-    rows: [
-      ${rows.map((r) => r.dartContent).join(',\n')}
-    ]
-  )
-  """;
+StepTable(
+      identifier: '$identifier',
+      header: ${header.dartContent}
+      rows: [
+        ${rows.asMap().entries.map((e) {
+
+          final rowIndex = e.key;
+          final row = e.value;
+
+          final extraPadding = rowIndex > 0 ? '        ' : '';
+
+          return '$extraPadding${row.dartContent}';
+        }).join('\n')}
+      ],
+    ),""";
 }
 
 class ScenarioTables {
@@ -102,7 +107,14 @@ class ScenarioTables {
 
   String get dartContent => """
   '$identifier': {
-    ${tables.map((t) => '\'${t.identifier}\': ${t.dartContent}').join(',\n')}
-  },
-  """;
+    ${tables.asMap().entries.map((e) {
+
+      final rowIndex = e.key;
+      final tableRow = e.value;
+
+      final extraPadding = rowIndex > 0 ? '    ' : '';
+
+      return '$extraPadding\'${tableRow.identifier}\': ${tableRow.dartContent}';
+    }).join('\n')}
+  },""";
 }
