@@ -131,10 +131,6 @@ class FeatureFile {
     .join('\n'); // re join each line by line break
 
   static List<StepTable> _parseStepTables(String scenarioContent) {
-    final tableLineMatcher = RegExp(
-      r'^\s*(\|.*\|)\s*(?:\s*#\s*.*)?$',
-      caseSensitive: false,
-    );
 
     final stepTables = <StepTable>[];
     StepTable? stepTable;
