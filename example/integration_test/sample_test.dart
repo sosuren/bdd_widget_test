@@ -6,7 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import './../test/step/common/the_app_is_running.dart';
+import './../test/step/initial_counter_value_is0.dart';
 import 'package:bdd_widget_test/step/i_see_text.dart';
+import './../test/step/add_button_increments_the_counter.dart';
 import 'package:bdd_widget_test/step/i_tap_icon.dart';
 
 void main() {
@@ -18,10 +20,12 @@ void main() {
   group('''Counter''', () {
     testWidgets('''Initial counter value is 0''', (tester) async {
       await bddSetUp(tester);
+      await initialCounterValueIs0();
       await iSeeText(tester, '0');
     });
     testWidgets('''Add button increments the counter''', (tester) async {
       await bddSetUp(tester);
+      await addButtonIncrementsTheCounter();
       await iTapIcon(tester, Icons.add);
       await iSeeText(tester, '1');
     });

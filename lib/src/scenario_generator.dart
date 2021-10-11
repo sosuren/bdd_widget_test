@@ -10,7 +10,9 @@ void parseScenario(
   List<BddLine> scenario,
   bool hasSetUp,
   bool hasTearDown,
-  String testMethodName,
+  String testMethodName, {
+    String? scenarioOutlineTitle,
+  }
 ) {
 
   final hasTable = scenarioTables.any((t) => t.identifier == scenarioTitle.hashCode.toString());
@@ -23,13 +25,13 @@ void parseScenario(
     if (inputLength > 1) {
 
       for (var i = 0; i < inputLength; i++) {
-        _parseScenarioWithTable(sb, scenarioTitle, scenarioTables, scenario, hasSetUp, hasTearDown, testMethodName, atIndex: i);
+        _parseScenarioWithTable(sb, scenarioTitle, scenarioTables, scenario, hasSetUp, hasTearDown, testMethodName, atIndex: i, scenarioOutlineTitle: scenarioOutlineTitle);
       }
       return;
     }
   }
 
-  _parseScenarioWithTable(sb, scenarioTitle, scenarioTables, scenario, hasSetUp, hasTearDown, testMethodName);
+  _parseScenarioWithTable(sb, scenarioTitle, scenarioTables, scenario, hasSetUp, hasTearDown, testMethodName, scenarioOutlineTitle: scenarioOutlineTitle);
 }
 
 void _parseScenarioWithTable(
@@ -40,11 +42,12 @@ void _parseScenarioWithTable(
   bool hasSetUp,
   bool hasTearDown,
   String testMethodName, {
-    int atIndex =0
+    int atIndex = 0,
+    String? scenarioOutlineTitle,
   }
 ) {
 
-  sb.writeln('    $testMethodName(\'\'\'$scenarioTitle\'\'\', (tester) async {');
+  sb.writeln('    $testMethodName(\'\'\'${scenarioOutlineTitle ?? scenarioTitle}\'\'\', (tester) async {');
     if (hasSetUp) {
       sb.writeln('      await $setUpMethodName(tester);');
     }

@@ -149,12 +149,13 @@ void _parseFeature(
       for (final g in generatedScenarios) {
         parseScenario(
           sb,
-          g.first.value,
+          scenario.first.value,
           scenarioTables,
           g.where((e) => e.type == LineType.step).toList(),
           hasSetUp,
           hasTearDown,
           scenarioTestMethodName,
+          scenarioOutlineTitle: g.first.value,
         );
       }
     }
