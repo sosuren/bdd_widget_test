@@ -39,14 +39,14 @@ import './step/i_input_these_data_in_register_form.dart';
 import './step/i_should_see_these_results_in_attendance_table.dart';
 
 void main() {
-  group('Testing feature', () {
-    testWidgets('$scenarioName', (tester) async {
+  group(\'\'\'Testing feature\'\'\', () {
+    testWidgets(\'\'\'$scenarioName\'\'\', (tester) async {
       await testingScenario();
       await iAmInTheRegisterForm(tester);
       await iInputTheseDataInRegisterForm(tester, featureTables['${scenarioName.hashCode}']!['${getStepMethodName(dataInputStep).hashCode}']!.copyWithRow(0));
       await iShouldSeeTheseResultsInAttendanceTable(tester, featureTables['${scenarioName.hashCode}']!['${getStepMethodName(dataResultStep).hashCode}']!.copyWithRow(0));
     });
-    testWidgets('Testing scenario', (tester) async {
+    testWidgets(\'\'\'Testing scenario\'\'\', (tester) async {
       await testingScenario();
       await iAmInTheRegisterForm(tester);
       await iInputTheseDataInRegisterForm(tester, featureTables['${scenarioName.hashCode}']!['${getStepMethodName(dataInputStep).hashCode}']!.copyWithRow(1));

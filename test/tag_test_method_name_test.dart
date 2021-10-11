@@ -22,8 +22,8 @@ import './step/testing_scenario.dart';
 import './step/the_app_is_running.dart';
 
 void main() {
-  group('Testing feature', () {
-    customTestWidgets('Testing scenario', (tester) async {
+  group(\'\'\'Testing feature\'\'\', () {
+    customTestWidgets(\'\'\'Testing scenario\'\'\', (tester) async {
       await testingScenario();
       await theAppIsRunning(tester);
     });
@@ -65,12 +65,12 @@ import './step/the_app_is_running.dart';
 import './step/testing_scenario2.dart';
 
 void main() {
-  group('Testing feature', () {
-    customTestWidgets('Testing scenario', (tester) async {
+  group(\'\'\'Testing feature\'\'\', () {
+    customTestWidgets(\'\'\'Testing scenario\'\'\', (tester) async {
       await testingScenario();
       await theAppIsRunning(tester);
     });
-    otherTestWidgets('Testing scenario 2', (tester) async {
+    otherTestWidgets(\'\'\'Testing scenario 2\'\'\', (tester) async {
       await testingScenario2();
       await theAppIsRunning(tester);
     });

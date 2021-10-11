@@ -21,8 +21,8 @@ import './step/testing_scenario.dart';
 import './step/the_app_is_running.dart';
 
 void main() {
-  group('Testing feature', () {
-    customTestWidgets('Testing scenario', (tester) async {
+  group(\'\'\'Testing feature\'\'\', () {
+    customTestWidgets(\'\'\'Testing scenario\'\'\', (tester) async {
       await testingScenario();
       await theAppIsRunning(tester);
     });

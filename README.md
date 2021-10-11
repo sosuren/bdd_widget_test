@@ -71,7 +71,7 @@ Feature: Counter
     Then I see {'1'} text
 ```
 
-`Backround` and `After` keywords are optional. A `Background` allows you to add some context to the scenarios that follow it. It can contain one or more Given steps, which are run before each scenario. An `After` scenarion run even if a test fails, to ensure that it has a chance to clean up after itself. Most probably you don't need to use this keyword.
+`Backround` and `After` sections are optional. A `Background` allows you to add some context to the scenarios that follow it. It can contain one or more Given steps, which are run before each scenario. An `After` scenarion run even if a test fails, to ensure that it has a chance to clean up after itself. Most probably you don't need to use this keyword.
 
 Each feature file must have one or more `Feature:`s. Features become test groups in Flutter tests.
 
@@ -79,6 +79,28 @@ Each feature group must have one or more `Scenario:`s (or `Example:`s). Scenario
 
 Each scenario must have one or more lines with steps. Each of them must start with `Given`, `When`, `Then`, `And`, or `But` keywords. Conventionally `Given` steps are used for test arrangements, `When` — for interaction, `Then` — for asserts. Keywords are not taken into account when looking for a step definition.
 You can have as many steps as you like, but it's recommended you keep the number at 3-5 per scenario. Having too many steps will cause it to lose it’s expressive power as specification and documentation. 
+
+The `Scenario Outline` keyword can be used to run the same `Scenario` multiple times, with different combinations of values.
+
+A Scenario Outline must contain an `Examples` (or `Scenarios`) section. Its steps are interpreted as a template which is never directly run. Instead, the Scenario Outline is run once for each row in the Examples section beneath it (not counting the first header row).
+
+The steps can use `<>` delimited parameters that reference headers in the examples table. The plugin will replace these parameters with values from the table before it tries to match the step against a step definition.
+
+Scenario Outline example:
+```ruby
+Feature: Sample
+
+  Scenario Outline: Plus button increases the counter
+    Given the app is running
+    When I tap {Icons.add} icon <times> times
+    Then I see <result> text
+
+    Examples:
+    | times | result |
+    |    0  |   '0'  |
+    |    1  |   '1'  |
+    |   42  |  '42'  |
+```
 
 ## Predefined steps
 
@@ -226,6 +248,30 @@ targets:
 ```
 
 You may set a relative path here (like `../../bdd_steps`), just be sure that the target folder is still somewhere under the `test` folder.
+
+### How to write integration tests?
+
+1. Add `integration_test` dependency to the `pubspec.yaml` file:
+```yaml
+dev_dependencies:
+  integration_test:
+    sdk: flutter
+```
+2. Modify `build.yaml` file to support code generation in the `integration_test` folder like that (here is the full [sample](example/build.yaml)):
+```yaml
+targets:
+  $default:
+    sources:
+      - integration_test/**   # By default, build runner will not generate code in the integration folder
+      - test/**               # so we override paths for code generation here
+      - lib/**
+      - $package$
+```
+3. (Optional) If you plan to re-use steps between integration and widget tests set a common step folder in the `build.yaml` file like that (here is the full [sample](example/build.yaml)):
+```yaml
+stepFolderName: ../test/step
+```
+4. Done. Now you may create feature files in `integration_test` folder. You may want to review the [official documentation](https://flutter.dev/docs/testing/integration-tests) for instructions on how to run integration tests.
 
 ## Contributing
 

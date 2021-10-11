@@ -31,6 +31,7 @@ class FeatureBuilder implements Builder {
       featureDir: featureDir,
       package: inputId.package,
       tablesFilename: tablesFileName,
+      isIntegrationTest: inputId.pathSegments.contains('integration_test'),
       existingSteps:
           getExistingStepSubfolders(featureDir, generatorOptions.stepFolder),
       input: contents,

@@ -1,10 +1,9 @@
 import 'package:bdd_widget_test/src/bdd_line.dart';
+import 'package:bdd_widget_test/src/scenario_generator.dart';
 import 'package:bdd_widget_test/src/step_data.dart';
 import 'package:bdd_widget_test/src/step_file.dart';
 import 'package:bdd_widget_test/src/step_generator.dart';
-
-const _setUpMethodName = 'bddSetUp';
-const _tearDownMethodName = 'bddTearDown';
+import 'package:bdd_widget_test/src/util/constants.dart';
 
 String generateTablesDart(List<ScenarioTables> scenarioTables) {
 
@@ -25,14 +24,23 @@ String generateTablesDart(List<ScenarioTables> scenarioTables) {
   return sb.toString();
 }
 
-String generateFeatureDart(List<ScenarioTables> scenarioTables,
-    List<BddLine> lines, List<StepFile> steps, String testMethodName, String tablesFilename) {
+String generateFeatureDart(
+  List<ScenarioTables> scenarioTables,
+  List<BddLine> lines,
+  List<StepFile> steps,
+  String testMethodName,
+  String tablesFilename,
+  bool isIntegrationTest,
+) {
   final sb = StringBuffer();
   sb.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
   sb.writeln('// ignore_for_file: unused_import, directives_ordering');
   sb.writeln();
   sb.writeln('import \'package:flutter/material.dart\';');
   sb.writeln('import \'package:flutter_test/flutter_test.dart\';');
+  if (isIntegrationTest) {
+    sb.writeln('import \'package:integration_test/integration_test.dart\';');
+  }
   sb.writeln();
 
   if (scenarioTables.isNotEmpty) {
@@ -62,6 +70,10 @@ String generateFeatureDart(List<ScenarioTables> scenarioTables,
 
   sb.writeln();
   sb.writeln('void main() {');
+  if (isIntegrationTest) {
+    sb.writeln('  IntegrationTestWidgetsFlutterBinding.ensureInitialized();');
+    sb.writeln();
+  }
 
   final features = splitWhen<BddLine>(
       lines.skipWhile((value) => value.type != LineType.feature), // skip header
@@ -85,10 +97,10 @@ String generateFeatureDart(List<ScenarioTables> scenarioTables,
 }
 
 bool _parseBackground(StringBuffer sb, List<BddLine> lines) =>
-    _parseSetup(sb, lines, LineType.background, _setUpMethodName);
+    _parseSetup(sb, lines, LineType.background, setUpMethodName);
 
 bool _parseAfter(StringBuffer sb, List<BddLine> lines) =>
-    _parseSetup(sb, lines, LineType.after, _tearDownMethodName);
+    _parseSetup(sb, lines, LineType.after, tearDownMethodName);
 
 bool _parseSetup(
     StringBuffer sb, List<BddLine> lines, LineType elementType, String title) {
@@ -113,26 +125,45 @@ void _parseFeature(
   bool hasTearDown,
   String testMethodName,
 ) {
-  sb.writeln('  group(\'${feature.first.value}\', () {');
+  sb.writeln('  group(\'\'\'${feature.first.value}\'\'\', () {');
 
   final scenarios = splitWhen<BddLine>(
-      feature.skipWhile((e) => e.type != LineType.scenario),
-      (e) => e.type == LineType.scenario).toList();
+    feature.skipWhile((e) => !_isScenarioKindLine(e.type)),
+    (e) => _isScenarioKindLine(e.type),
+  ).toList();
   for (final scenario in scenarios) {
     final scenarioTestMethodName =
         _parseScenaioTags(feature, scenario.first, testMethodName);
-    _parseScenario(
-      sb,
-      scenario.first.value,
-      scenarioTables,
-      scenario.where((e) => e.type == LineType.step).toList(),
-      hasSetUp,
-      hasTearDown,
-      scenarioTestMethodName,
-    );
+    if (scenario.first.type == LineType.scenario) {
+      parseScenario(
+        sb,
+        scenario.first.value,
+        scenarioTables,
+        scenario.where((e) => e.type == LineType.step).toList(),
+        hasSetUp,
+        hasTearDown,
+        scenarioTestMethodName,
+      );
+    } else {
+      final generatedScenarios = generateScenariosFromScenaioOutline(scenario);
+      for (final g in generatedScenarios) {
+        parseScenario(
+          sb,
+          g.first.value,
+          scenarioTables,
+          g.where((e) => e.type == LineType.step).toList(),
+          hasSetUp,
+          hasTearDown,
+          scenarioTestMethodName,
+        );
+      }
+    }
   }
   sb.writeln('  });');
 }
+
+bool _isScenarioKindLine(LineType type) =>
+    type == LineType.scenario || type == LineType.scenarioOutline;
 
 String _parseScenaioTags(
   List<BddLine> feature,
@@ -148,64 +179,6 @@ String _parseScenaioTags(
     }
   }
   return scenarioTestMethodName;
-}
-
-void _parseScenario(
-  StringBuffer sb,
-  String scenarioTitle,
-  List<ScenarioTables> scenarioTables,
-  List<BddLine> scenario,
-  bool hasSetUp,
-  bool hasTearDown,
-  String testMethodName,
-) {
-
-  final hasTable = scenarioTables.any((t) => t.identifier == scenarioTitle.hashCode.toString());
-
-  if (hasTable) {
-
-    final scenarioTable = scenarioTables.firstWhere((t) => t.identifier == scenarioTitle.hashCode.toString());
-
-    final inputLength = scenarioTable.tables.first.rows.length;
-    if (inputLength > 1) {
-
-      for (var i = 0; i < inputLength; i++) {
-        _parseScenarioWithTable(sb, scenarioTitle, scenarioTables, scenario, hasSetUp, hasTearDown, testMethodName, atIndex: i);
-      }
-      return;
-    }
-  }
-
-  _parseScenarioWithTable(sb, scenarioTitle, scenarioTables, scenario, hasSetUp, hasTearDown, testMethodName);
-}
-
-void _parseScenarioWithTable(
-  StringBuffer sb,
-  String scenarioTitle,
-  List<ScenarioTables> scenarioTables,
-  List<BddLine> scenario,
-  bool hasSetUp,
-  bool hasTearDown,
-  String testMethodName, {
-    int atIndex =0
-  }
-) {
-
-  sb.writeln('    $testMethodName(\'$scenarioTitle\', (tester) async {');
-    if (hasSetUp) {
-      sb.writeln('      await $_setUpMethodName(tester);');
-    }
-    sb.writeln('      await ${getStepMethodName(scenarioTitle)}();');
-
-    for (final step in scenario) {
-      sb.writeln('      await ${getStepMethodCall(step.value, scenarioTitle: scenarioTitle, atIndex: atIndex)};');
-    }
-
-    if (hasTearDown) {
-      sb.writeln('      await $_tearDownMethodName(tester);');
-    }
-
-    sb.writeln('    });');
 }
 
 String _parseTestMethodNameTag(String rawLine) {

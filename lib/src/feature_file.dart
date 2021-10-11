@@ -11,6 +11,7 @@ class FeatureFile {
     required this.package,
     required this.tablesFilename,
     required String input,
+    this.isIntegrationTest = false,
     this.existingSteps = const <String, String>{},
     this.generatorOptions = const GeneratorOptions(),
   }) : scenarioTables = getScenarioTables(input), _lines = _prepareLines(input
@@ -37,6 +38,7 @@ class FeatureFile {
   final String package;
   final String tablesFilename;
   final List<ScenarioTables> scenarioTables;
+  final bool isIntegrationTest;
   final List<BddLine> _lines;
   final Map<String, String> existingSteps;
   final GeneratorOptions generatorOptions;
@@ -49,6 +51,7 @@ class FeatureFile {
         getStepFiles(),
         generatorOptions.testMethodName,
         tablesFilename,
+        isIntegrationTest,
       );
 
   List<StepFile> getStepFiles() => _stepFiles;

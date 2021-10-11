@@ -23,8 +23,8 @@ import 'package:flutter/cupertino.dart';
 import './step/the_app_is_running.dart';
 
 void main() {
-  group('Testing feature', () {
-    testWidgets('Testing scenario', (tester) async {
+  group(\'\'\'Testing feature\'\'\', () {
+    testWidgets(\'\'\'Testing scenario\'\'\', (tester) async {
       await testingScenario();
       await theAppIsRunning(tester);
     });
