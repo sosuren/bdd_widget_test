@@ -107,7 +107,7 @@ Iterable<BddLine> _processScenarioLines(
 String _replacePlaceholders(String line, Map<String, String> example) {
   var replaced = line;
   for (final e in example.keys) {
-    replaced = replaced.replaceAll(' <$e> ', ' {${example[e]}} ');
+    replaced = replaced.replaceAll('<$e>', ' {\'${example[e]}\'} ');
   }
   return replaced;
 }
