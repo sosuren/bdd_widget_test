@@ -26,10 +26,10 @@ Future<void> iTapIcon(
 ''';
 
     final feature = FeatureFile(
-        featureDir: '$path.feature', package: path, input: featureFile);
+        featureDir: '$path.feature', tablesFilename: '${path}_tables.dart', package: path, input: featureFile);
 
     expect(
-      feature.getStepFiles().whereType<NewStepFile>().single.dartContent,
+      feature.getStepFiles().whereType<NewStepFile>().last.dartContent,
       expectedSteps,
     );
   });

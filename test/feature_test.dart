@@ -22,6 +22,7 @@ void main() {
 
     final feature = FeatureFile(
       featureDir: 'test.feature',
+      tablesFilename: 'test_tables.dart',
       package: 'test',
       input: '',
     );
@@ -30,11 +31,13 @@ void main() {
 
   test('simplest feature file parses', () {
     const expectedFeatureDart =
-        '''${expectedHeader}import './step/the_app_is_running.dart';
+        '''${expectedHeader}import './step/testing_scenario.dart';
+import './step/the_app_is_running.dart';
 
 void main() {
   group(\'\'\'Testing feature\'\'\', () {
     testWidgets(\'\'\'Testing scenario\'\'\', (tester) async {
+      await testingScenario();
       await theAppIsRunning(tester);
     });
   });
@@ -43,6 +46,7 @@ void main() {
 
     final feature = FeatureFile(
       featureDir: 'test.feature',
+      tablesFilename: 'test_tables.dart',
       package: 'test',
       input: minimalFeatureFile,
     );
@@ -51,13 +55,15 @@ void main() {
 
   test('Step with parameters', () {
     const expectedFeatureDart =
-        '''${expectedHeader}import './step/the_app_is_running.dart';
+        '''${expectedHeader}import './step/testing_scenario.dart';
+import './step/the_app_is_running.dart';
 import './step/i_see_text.dart';
 import './step/i_see_icon.dart';
 
 void main() {
   group(\'\'\'Testing feature\'\'\', () {
     testWidgets(\'\'\'Testing scenario\'\'\', (tester) async {
+      await testingScenario();
       await theAppIsRunning(tester);
       await iSeeText(tester, 'nice param');
       await iSeeIcon(tester, Icons.add);
@@ -68,6 +74,7 @@ void main() {
 
     final feature = FeatureFile(
       featureDir: 'test.feature',
+      tablesFilename: 'test_tables.dart',
       package: 'test',
       input: featureFile,
     );
@@ -77,19 +84,24 @@ void main() {
   test('Several features in one file', () {
     const expectedFeatureDart = '''$expectedHeader// some comment
 
+import './step/first_testing_scenario.dart';
 import './step/the_app_is_running.dart';
+import './step/second_testing_scenario.dart';
 
 void main() {
   group(\'\'\'First testing feature\'\'\', () {
     testWidgets(\'\'\'First testing scenario\'\'\', (tester) async {
+      await firstTestingScenario();
       await theAppIsRunning(tester);
     });
   });
   group(\'\'\'Second testing feature\'\'\', () {
     testWidgets(\'\'\'First testing scenario\'\'\', (tester) async {
+      await firstTestingScenario();
       await theAppIsRunning(tester);
     });
     testWidgets(\'\'\'Second testing scenario\'\'\', (tester) async {
+      await secondTestingScenario();
       await theAppIsRunning(tester);
     });
   });
@@ -98,6 +110,7 @@ void main() {
 
     final feature = FeatureFile(
       featureDir: 'test.feature',
+      tablesFilename: 'test_tables.dart',
       package: 'test',
       input: bigFeatureFile,
     );

@@ -19,11 +19,13 @@ import 'package:flutter/cupertino.dart';
 
 ''';
     const expectedFeatureDart =
-        '''$expectedHeader${additionalLines}import './step/the_app_is_running.dart';
+        '''$expectedHeader${additionalLines}import './step/testing_scenario.dart';
+import './step/the_app_is_running.dart';
 
 void main() {
   group(\'\'\'Testing feature\'\'\', () {
     testWidgets(\'\'\'Testing scenario\'\'\', (tester) async {
+      await testingScenario();
       await theAppIsRunning(tester);
     });
   });
@@ -32,6 +34,7 @@ void main() {
 
     final feature = FeatureFile(
       featureDir: 'test.feature',
+      tablesFilename: 'test_tables.dart',
       package: 'test',
       input: additionalLines + minimalFeatureFile,
     );

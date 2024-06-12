@@ -24,6 +24,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import './step/the_app_is_running.dart';
 import './step/i_do_not_see_text.dart';
+import './step/initial_counter_value_is0.dart';
 import 'package:bdd_sample/i_see_text.dart';
 
 void main() {
@@ -36,6 +37,7 @@ void main() {
   group(\'\'\'Counter\'\'\', () {
     customTestWidgets(\'\'\'Initial counter value is 0\'\'\', (tester) async {
       await bddSetUp(tester);
+      await initialCounterValueIs0();
       await theAppIsRunning(tester);
       await iSeeText(tester, '0');
       await bddTearDown(tester);
@@ -46,6 +48,7 @@ void main() {
 
     final feature = FeatureFile(
       featureDir: 'test.feature',
+      tablesFilename: 'test_tables.dart',
       package: 'test',
       input: featureFile,
       generatorOptions: const GeneratorOptions(

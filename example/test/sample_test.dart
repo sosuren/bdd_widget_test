@@ -6,8 +6,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 import './../test/step/common/the_app_is_running.dart';
 import './../test/step/i_do_not_see_text.dart';
+import './../test/step/initial_counter_value_is0.dart';
 import 'package:bdd_widget_test/step/i_see_text.dart';
+import './../test/step/add_button_increments_the_counter.dart';
 import 'package:bdd_widget_test/step/i_tap_icon.dart';
+import './../test/step/outline_plus_button_increases_the_counter.dart';
 import './../test/step/i_tap_icon_times.dart';
 
 void main() {
@@ -20,17 +23,20 @@ void main() {
   group('''Counter''', () {
     testWidgets('''Initial counter value is 0''', (tester) async {
       await bddSetUp(tester);
+      await initialCounterValueIs0();
       await iSeeText(tester, '0');
       await bddTearDown(tester);
     });
     testWidgets('''Add button increments the counter''', (tester) async {
       await bddSetUp(tester);
+      await addButtonIncrementsTheCounter();
       await iTapIcon(tester, Icons.add);
       await iSeeText(tester, '1');
       await bddTearDown(tester);
     });
     testWidgets('''Outline: Plus button increases the counter (0, '0')''', (tester) async {
       await bddSetUp(tester);
+      await outlinePlusButtonIncreasesTheCounter();
       await theAppIsRunning(tester);
       await iTapIconTimes(tester, Icons.add, 0);
       await iSeeText(tester, '0');
@@ -38,6 +44,7 @@ void main() {
     });
     testWidgets('''Outline: Plus button increases the counter (1, '1')''', (tester) async {
       await bddSetUp(tester);
+      await outlinePlusButtonIncreasesTheCounter();
       await theAppIsRunning(tester);
       await iTapIconTimes(tester, Icons.add, 1);
       await iSeeText(tester, '1');
@@ -45,6 +52,7 @@ void main() {
     });
     testWidgets('''Outline: Plus button increases the counter (42, '42')''', (tester) async {
       await bddSetUp(tester);
+      await outlinePlusButtonIncreasesTheCounter();
       await theAppIsRunning(tester);
       await iTapIconTimes(tester, Icons.add, 42);
       await iSeeText(tester, '42');

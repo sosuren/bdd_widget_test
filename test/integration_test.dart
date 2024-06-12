@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+import './step/testing_scenario.dart';
 import './step/the_app_is_running.dart';
 
 void main() {
@@ -19,6 +20,7 @@ void main() {
 
   group(\'\'\'Testing feature\'\'\', () {
     testWidgets(\'\'\'Testing scenario\'\'\', (tester) async {
+      await testingScenario();
       await theAppIsRunning(tester);
     });
   });
@@ -29,6 +31,7 @@ void main() {
       featureDir: 'test.feature',
       package: 'test',
       input: minimalFeatureFile,
+      tablesFilename: 'test_tables.dart',
       isIntegrationTest: true,
     );
     expect(feature.dartContent, expectedFeatureDart);

@@ -1,3 +1,4 @@
+import 'package:bdd_widget_test/src/feature_file.dart';
 import 'package:bdd_widget_test/src/regex.dart';
 import 'package:bdd_widget_test/src/step/bdd_step.dart';
 import 'package:bdd_widget_test/src/step/generic_step.dart';
@@ -19,8 +20,13 @@ import 'package:bdd_widget_test/src/step/i_see_widget.dart';
 import 'package:bdd_widget_test/src/step/i_tap_icon.dart';
 import 'package:bdd_widget_test/src/step/i_tap_text.dart';
 import 'package:bdd_widget_test/src/step/i_wait.dart';
+import 'package:bdd_widget_test/src/step/scenario_step.dart';
 import 'package:bdd_widget_test/src/step/the_app_is_running_step.dart';
 import 'package:bdd_widget_test/src/util/string_utils.dart';
+
+import 'package:path/path.dart' as p;
+
+String getTablesFilename(String featureDir, String featurePath) => '${p.withoutExtension(p.basename(featurePath))}_tables.dart';
 
 String getStepFilename(String stepText) {
   final step = getStepMethodName(stepText);
@@ -38,8 +44,12 @@ String getStepMethodName(String stepText) {
   return camelize(text);
 }
 
-String getStepMethodCall(String stepLine) {
+String getStepMethodCall(String stepLine, { String? scenarioTitle, int? atIndex }) {
   final name = getStepMethodName(stepLine);
+
+  if (FeatureFile.dataStepMatcher.hasMatch(stepLine)) {
+    return '$name(tester, featureTables[\'${scenarioTitle.hashCode}\']![\'${name.hashCode}\']!.copyWithRow(${atIndex!}))';
+  }
 
   final params = parametersValueRegExp.allMatches(stepLine);
   if (params.isEmpty) {
@@ -48,6 +58,12 @@ String getStepMethodCall(String stepLine) {
 
   final methodParameters = params.map((p) => p.group(0)).join(', ');
   return '$name(tester, $methodParameters)';
+}
+
+String generateScenarioDart(String package, String line) {
+  final methodName = getStepMethodName(line);
+  final scenarioStep = ScenarioStep(methodName);
+  return scenarioStep.content;
 }
 
 String generateStepDart(String package, String line) {

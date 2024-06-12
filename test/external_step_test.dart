@@ -14,8 +14,12 @@ Feature: Testing feature
 
     final feature = FeatureFile(
       featureDir: '$path.feature',
+      tablesFilename: '${path}_tables.dart',
       package: path,
       input: featureFile,
+      existingSteps: {
+        'testing_scenario.dart': 'scenario',
+      },
       generatorOptions: const GeneratorOptions(
           externalSteps: ['package:some_package/i_have_an_external_step.dart']),
     );
@@ -25,8 +29,8 @@ Feature: Testing feature
       true,
     );
     expect(
-      feature.getStepFiles().whereType<ExistingStepFile>().isEmpty,
-      true,
+      feature.getStepFiles().whereType<ExistingStepFile>().length == 1,
+      isTrue,
     );
     expect(
       feature.getStepFiles().whereType<ExternalStepFile>().length,

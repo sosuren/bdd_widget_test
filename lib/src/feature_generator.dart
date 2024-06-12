@@ -1,13 +1,35 @@
 import 'package:bdd_widget_test/src/bdd_line.dart';
 import 'package:bdd_widget_test/src/scenario_generator.dart';
+import 'package:bdd_widget_test/src/step_data.dart';
 import 'package:bdd_widget_test/src/step_file.dart';
 import 'package:bdd_widget_test/src/step_generator.dart';
 import 'package:bdd_widget_test/src/util/constants.dart';
 
+String generateTablesDart(List<ScenarioTables> scenarioTables) {
+
+  final sb = StringBuffer();
+  sb.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
+  sb.writeln();
+  sb.writeln('import \'package:bdd_widget_test/bdd_widget_test.dart\';');
+  sb.writeln();
+
+  sb.writeln('final Map<String, Map<String, StepTable>> featureTables = {');
+
+  for (final scenarioTable in scenarioTables) {
+    sb.writeln(scenarioTable.dartContent);
+  }
+
+  sb.writeln('};');
+
+  return sb.toString();
+}
+
 String generateFeatureDart(
+  List<ScenarioTables> scenarioTables,
   List<BddLine> lines,
   List<StepFile> steps,
   String testMethodName,
+  String tablesFilename,
   bool isIntegrationTest,
 ) {
   final sb = StringBuffer();
@@ -20,6 +42,13 @@ String generateFeatureDart(
     sb.writeln('import \'package:integration_test/integration_test.dart\';');
   }
   sb.writeln();
+
+  if (scenarioTables.isNotEmpty) {
+    sb.writeln('import \'package:bdd_widget_test/bdd_widget_test.dart\';');
+    sb.writeln();
+    sb.writeln('import \'./$tablesFilename\';');
+    sb.writeln();
+  }
 
   var featureTestMethodNameOverride = testMethodName;
 
@@ -56,6 +85,7 @@ String generateFeatureDart(
 
     _parseFeature(
       sb,
+      scenarioTables,
       feature,
       hasBackground,
       hasAfter,
@@ -89,6 +119,7 @@ bool _parseSetup(
 
 void _parseFeature(
   StringBuffer sb,
+  List<ScenarioTables> scenarioTables,
   List<BddLine> feature,
   bool hasSetUp,
   bool hasTearDown,
@@ -107,6 +138,7 @@ void _parseFeature(
       parseScenario(
         sb,
         scenario.first.value,
+        scenarioTables,
         scenario.where((e) => e.type == LineType.step).toList(),
         hasSetUp,
         hasTearDown,
@@ -117,11 +149,13 @@ void _parseFeature(
       for (final g in generatedScenarios) {
         parseScenario(
           sb,
-          g.first.value,
+          scenario.first.value,
+          scenarioTables,
           g.where((e) => e.type == LineType.step).toList(),
           hasSetUp,
           hasTearDown,
           scenarioTestMethodName,
+          scenarioOutlineTitle: g.first.value,
         );
       }
     }

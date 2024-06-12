@@ -23,6 +23,7 @@ Feature: Testing feature
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import './step/outline_eating.dart';
 import './step/there_are_cucumbers.dart';
 import './step/i_eat_cucumbers.dart';
 import './step/i_should_have_cucumbers.dart';
@@ -30,11 +31,13 @@ import './step/i_should_have_cucumbers.dart';
 void main() {
   group(\'\'\'Testing feature\'\'\', () {
     testWidgets(\'\'\'Outline: eating (12, 5, 7)\'\'\', (tester) async {
+      await outlineEating();
       await thereAreCucumbers(tester, 12);
       await iEatCucumbers(tester, 5);
       await iShouldHaveCucumbers(tester, 7);
     });
     testWidgets(\'\'\'Outline: eating (20, 5, 15)\'\'\', (tester) async {
+      await outlineEating();
       await thereAreCucumbers(tester, 20);
       await iEatCucumbers(tester, 5);
       await iShouldHaveCucumbers(tester, 15);
@@ -47,6 +50,7 @@ void main() {
       featureDir: 'test.feature',
       package: 'test',
       input: featureFile,
+      tablesFilename: 'test_tables.dart',
     );
     expect(feature.dartContent, expectedFeatureDart);
   });
@@ -70,14 +74,17 @@ Feature: Testing feature
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import './step/outline_params.dart';
 import './step/there_are_mixed_parameters.dart';
 
 void main() {
   group(\'\'\'Testing feature\'\'\', () {
     testWidgets(\'\'\'Outline: params (12, '5', Icons.add)\'\'\', (tester) async {
+      await outlineParams();
       await thereAreMixedParameters(tester, 12, '5', Icons.add);
     });
     testWidgets(\'\'\'Outline: params ('20', 5.0, MyClass)\'\'\', (tester) async {
+      await outlineParams();
       await thereAreMixedParameters(tester, '20', 5.0, MyClass);
     });
   });
@@ -88,6 +95,7 @@ void main() {
       featureDir: 'test.feature',
       package: 'test',
       input: featureFile,
+      tablesFilename: 'test_tables.dart',
     );
     expect(feature.dartContent, expectedFeatureDart);
   });
